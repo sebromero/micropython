@@ -18,17 +18,18 @@ while (True):
     time.sleep_ms(100)
 """
 
-import time
-
-
 class IMU:
     def __init__(self, bus):
         """Initializes Gyro, Accelerometer and Magnetometer using default values."""
-        if 0x68 in bus.scan():
-            from bmm150 import BMM150
-            from bmi270 import BMI270
+        devices = bus.scan()
 
-            magnet = BMM150(bus)
+        if 0x68 in devices:
+            from bmi270 import BMI270
+            magnet = None
+            
+            if 0x10 in devices:
+                from bmm150 import BMM150
+                magnet = BMM150(bus)
             self.imu = BMI270(bus, bmm_magnet=magnet)
         else:
             from lsm9ds1 import LSM9DS1
